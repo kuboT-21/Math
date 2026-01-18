@@ -2,66 +2,253 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>2けたのかけざん練習</title>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3年生 算数 かけざんプリント</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Zen Maru Gothic', sans-serif; background-color: #fdfcf0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { background: white; padding: 40px; border-radius: 30px; box-shadow: 0 8px 0 #eddeaf; text-align: center; border: 4px solid #ff9800; }
-        .q { font-size: 4rem; margin-bottom: 20px; color: #444; }
-        input { font-family: 'Zen Maru Gothic', sans-serif; font-size: 3rem; width: 200px; text-align: center; border: 3px solid #ccc; border-radius: 15px; outline: none; }
-        input:focus { border-color: #ff9800; }
-        #feedback { font-size: 2.5rem; height: 60px; margin-top: 20px; font-weight: bold; }
-        .maru { color: #f44336; }
-        .batsu { color: #2196f3; }
-        button { font-family: 'Zen Maru Gothic', sans-serif; font-size: 1.5rem; background: #ff9800; color: white; border: none; padding: 15px 40px; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 0 #e68a00; }
-        button:active { transform: translateY(4px); box-shadow: none; }
+        /* 基本設定 */
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 上部ボタンエリア（印刷時は非表示） */
+        .menu-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.8; }
+        .btn-new     { background-color: #8e44ad; } /* 紫 */
+        .btn-check   { background-color: #e74c3c; } /* 赤 */
+        .btn-print   { background-color: #3498db; } /* 青 */
+        .btn-show    { background-color: #2ecc71; } /* 緑 */
+
+        /* プリント用紙エリア */
+        .sheet {
+            background-color: white;
+            width: 210mm; /* A4サイズ相当 */
+            min-height: 297mm;
+            padding: 20mm;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* ヘッダー部分（タイトルと名前欄） */
+        .header-box {
+            border: 3px solid black;
+            padding: 20px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0 0 20px 0;
+        }
+        .name-area {
+            text-align: right;
+            font-size: 18px;
+        }
+        .name-line {
+            display: inline-block;
+            width: 200px;
+            border-bottom: 1px solid black;
+            margin-left: 10px;
+            height: 25px;
+        }
+
+        /* 点数ボックス */
+        .score-box {
+            position: absolute;
+            right: 20mm;
+            top: 65mm;
+            border: 1px solid black;
+            width: 150px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .score-val {
+            font-size: 40px;
+            color: #e74c3c;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        /* 問題エリア */
+        .questions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px 60px;
+            margin-top: 40px;
+        }
+        .q-item {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            height: 50px;
+        }
+        .q-num {
+            width: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+        .q-text {
+            flex-grow: 1;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+        .ans-input {
+            width: 100px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 24px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px;
+            text-align: center;
+            outline: none;
+        }
+        .ans-input:focus { border-color: #3498db; }
+        .mark {
+            width: 40px;
+            font-size: 30px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        .correct { color: #e74c3c; }
+        .incorrect { color: #3498db; }
+
+        /* 印刷時の設定 */
+        @media print {
+            body { background-color: white; padding: 0; }
+            .menu-bar { display: none; }
+            .sheet { box-shadow: none; width: 100%; padding: 10mm; }
+            .ans-input { border: 1px solid #eee; }
+        }
     </style>
 </head>
 <body>
-<div class="box">
-    <div class="q" id="question">-- × --</div>
-    <input type="text" id="ans" placeholder="？" inputmode="numeric">
-    <div id="feedback"></div>
-    <button id="btn" onclick="check()">こたえあわせ</button>
-</div>
+
+    <div class="menu-bar">
+        <button class="btn btn-new" onclick="makeQuestions()">🔄 問題を作る</button>
+        <button class="btn btn-check" onclick="checkAnswers()">💮 答え合わせ</button>
+        <button class="btn btn-print" onclick="window.print()">🖨️ 印刷する</button>
+        <button class="btn btn-show" onclick="showAnswers()">👀 答えを見る</button>
+    </div>
+
+    <div class="sheet">
+        <div class="header-box">
+            <h1 class="title">3年生 算数　かけ算の筆算 (1)</h1>
+            <div class="name-area">
+                ____年 ____組　名前<span class="name-line"></span>
+            </div>
+        </div>
+
+        <div class="score-box">
+            点数 <span id="total-score" class="score-val">0</span> / 100
+        </div>
+
+        <div id="q-container" class="questions-grid">
+            </div>
+
+        <p style="margin-top: 50px; color: #666; font-size: 14px;">
+            ※ □の中に数字を入れて、「答え合わせ」ボタンを押してね。
+        </p>
+    </div>
 
 <script>
-    let a, b, goal;
-    const qEl = document.getElementById('question');
-    const ansEl = document.getElementById('ans');
-    const fbEl = document.getElementById('feedback');
-    const btnEl = document.getElementById('btn');
+    let questions = [];
 
-    function newQ() {
-        a = Math.floor(Math.random() * 90) + 10;
-        b = Math.floor(Math.random() * 8) + 2;
-        goal = a * b;
-        qEl.innerText = a + " × " + b;
-        ansEl.value = "";
-        fbEl.innerText = "";
-        btnEl.innerText = "こたえあわせ";
-        btnEl.onclick = check;
-        ansEl.focus();
+    // 全角数字を半角に変換
+    function toHalfWidth(str) {
+        return str.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
     }
 
-    ansEl.addEventListener('input', () => {
-        ansEl.value = ansEl.value.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)).replace(/[^0-9]/g, '');
-    });
+    // 問題作成
+    function makeQuestions() {
+        const container = document.getElementById('q-container');
+        container.innerHTML = "";
+        questions = [];
+        document.getElementById('total-score').innerText = "0";
 
-    function check() {
-        if (ansEl.value == goal) {
-            fbEl.innerText = "○ せいかい！";
-            fbEl.className = "maru";
-            btnEl.innerText = "つぎへ";
-            btnEl.onclick = newQ;
-        } else {
-            fbEl.innerText = "× ざんねん！";
-            fbEl.className = "batsu";
+        for (let i = 0; i < 10; i++) {
+            // かけられる数：1桁または2桁
+            const n1 = Math.floor(Math.random() * 98) + 2; 
+            // かける数：必ず2桁 (10-99)
+            const n2 = Math.floor(Math.random() * 90) + 10; 
+            
+            questions.push({ n1, n2, ans: n1 * n2 });
+
+            const div = document.createElement('div');
+            div.className = 'q-item';
+            div.innerHTML = `
+                <div class="q-num">(${i + 1})</div>
+                <div class="q-text">${n1} × ${n2} =</div>
+                <input type="text" class="ans-input" id="input-${i}" inputmode="numeric">
+                <div id="mark-${i}" class="mark"></div>
+            `;
+            container.appendChild(div);
         }
+
+        // 入力制限と変換の設定
+        document.querySelectorAll('.ans-input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.value = toHalfWidth(this.value).replace(/[^0-9]/g, '');
+            });
+        });
     }
 
-    ansEl.addEventListener('keypress', e => { if(e.key==='Enter') btnEl.click(); });
-    newQ();
+    // 答え合わせ・採点
+    function checkAnswers() {
+        let score = 0;
+        questions.forEach((q, i) => {
+            const userInput = document.getElementById(`input-${i}`).value;
+            const mark = document.getElementById(`mark-${i}`);
+            
+            if (parseInt(userInput) === q.ans) {
+                mark.innerText = "○";
+                mark.className = "mark correct";
+                score += 10;
+            } else {
+                mark.innerText = "×";
+                mark.className = "mark incorrect";
+            }
+        });
+        document.getElementById('total-score').innerText = score;
+    }
+
+    // 答えを見る
+    function showAnswers() {
+        questions.forEach((q, i) => {
+            document.getElementById(`input-${i}`).value = q.ans;
+        });
+    }
+
+    // 最初の起動
+    makeQuestions();
 </script>
+
 </body>
 </html>
